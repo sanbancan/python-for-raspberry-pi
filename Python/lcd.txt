@@ -1,0 +1,119 @@
+import RPi.GPIO as GPIO
+import time
+#from time import sleep
+RS = 7
+E = 8
+D4 = 25
+D5 = 24
+D6 = 23
+D7 = 18
+
+WIDTH = 16
+CHR = True
+CMD = False
+
+line1 = 0x80
+line2 = 0xC0
+
+#E_D = 0.005
+#E_P = 0.005
+
+def main():
+	GPIO.setwarnings(False)
+	GPIO.setmode(GPIO.BCM)
+	GPIO.setup(E,GPIO.OUT)
+	GPIO.setup(RS,GPIO.OUT)
+	GPIO.setup(D4,GPIO.OUT)
+	GPIO.setup(D5,GPIO.OUT)
+	GPIO.setup(D6,GPIO.OUT)
+	GPIO.setup(D7,GPIO.OUT)
+
+	init_lcd()
+
+	while True:
+
+		lcd_string("HEY",line1)
+		lcd_string("PYTHON IT IS",line2)
+		time.sleep(3)
+
+		lcd_string("Raspberry PI",line1)
+		lcd_string("FROM PROLIFIC",line2)
+		time.sleep(3)
+
+
+def init_lcd():
+	lcd_disp(0x28,CMD)
+	lcd_disp(0x0C,CMD)
+	lcd_disp(0x01,CMD)
+	time.sleep(0.005)
+
+def lcd_disp(bits,mode):
+	GPIO.output(RS,mode)
+
+	GPIO.output(D4,False)
+	GPIO.output(D5,False)
+	GPIO.output(D6,False)
+	GPIO.output(D7,False)
+
+	if bits & 0x10 == 0x10:
+		GPIO.output(D4,True)
+
+	if bits & 0x20 == 0x20:
+		GPIO.output(D5,True)
+
+	if bits & 0x40 == 0x40:
+		GPIO.output(D6,True)
+
+	if bits & 0x80 == 0x80:
+		GPIO.output(D7,True)
+
+	enable()
+
+        GPIO.output(D4,False)
+        GPIO.output(D5,False)
+        GPIO.output(D6,False)
+        GPIO.output(D7,False)
+
+        if bits & 0x01 == 0x01:
+                GPIO.output(D4,True)
+
+        if bits & 0x02 == 0x02:
+                GPIO.output(D5,True)
+
+        if bits & 0x04 == 0x04:
+                GPIO.output(D6,True)
+
+        if bits & 0x08 == 0x08:
+                GPIO.output(D7,True)
+
+        enable()
+
+def enable():
+	time.sleep(0.005)
+	GPIO.output(E,True)
+	time.sleep(0.005)
+	GPIO.output(E,False)
+	time.sleep(0.005)
+
+def lcd_string(msg,line):
+	msg = msg.ljust(WIDTH," ")
+
+	lcd_disp(line,CMD)
+
+	for i in range(WIDTH):
+		lcd_disp(ord(msg[i]),CHR)
+
+if __name__ == '__main__':
+
+	try:
+		main()
+
+	except KeyboardInterrupt:
+		pass
+
+	finally:
+
+		lcd_disp(0x01,CMD)
+		GPIO.cleanup()
+
+

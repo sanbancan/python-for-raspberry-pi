@@ -1,0 +1,25 @@
+import serial
+import time
+print "starting program"
+ser=serial.Serial('/dev/ttyAMA0',baudrate=9600,parity=serial.PARITY_NONE,stopbits=serial.STOPBITS_ONE,bytesize=serial.EIGHTBITS)
+time.sleep(1)
+try:
+
+	ser.write('Hello world\r\n')
+	ser.write('Serial Communication USing Raspberry Pi\r\n')
+	ser.write('By: Embeddede Laboratory\r\n')
+	print 'Data Echo More Enabled'
+	while True:
+
+		if ser.inWaiting() > 0:
+			Data = ser.read()
+			print Data
+except KeyboardInterrupt:
+	print "Existing PRogram"
+except:
+	print "Error Occurred in Existing Program"
+finally:
+	ser.close()
+	pass
+	
+

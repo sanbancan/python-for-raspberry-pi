@@ -1,0 +1,22 @@
+import RPi.GPIO as GPIO
+import time
+GPIO.setwarnings(False)
+GPIO.setmode(GPIO.BCM)
+GPIO.setup(18,GPIO.OUT)
+
+x = GPIO.PWM(18,100)
+
+x.start(0)
+
+while 1:
+	time.sleep(1)
+	for m in range(0,50,1):
+		x.ChangeDutyCycle(m)
+		time.sleep(0.1)
+	time.sleep(5)
+	for m in range(0,50,1):
+		x.ChangeDutyCycle(50-m)
+		time.sleep(0.1)
+	time.sleep(10)
+
+

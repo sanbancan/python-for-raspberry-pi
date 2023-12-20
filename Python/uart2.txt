@@ -1,0 +1,13 @@
+import serial
+
+ser = serial.Serial("/dev/ttyAMA0")
+ser.baudrate = 9600
+#dat = ser.read(10)
+
+while True:
+	dat = ser.read(1)
+	ser.write(dat)
+
+ser.close()
+
+
